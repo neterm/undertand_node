@@ -737,7 +737,7 @@ C/C++扩展模块与JavaScript模块的区别在于加载后就不需要编译�
 
 使用C/C++扩展模块的一个好处在于可以更灵活和动态的加载它们，保持Node模块自身简单性的同时，给予Node无限的可扩展性。
 
-关于`node-gyp`工具更多细节可以参考 https://github.com/TooTallNate/node-gyp（作者为 Nathan Rajlich，Node源码的核心贡献者之一）。
+关于`node-gyp`工具更多细节可以参考 [gitbub仓库](https://github.com/TooTallNate/node-gyp) （作者为Nathan Rajlich，Node源码的核心贡献者之一）。
 
 ## 2.5 模块调用栈
 
@@ -777,7 +777,7 @@ CommonJS为package.json文件定义了如下一些必须字段。
 
 - **name**。包名。规范定义它需要由小写字母和数字组成，可以包含`.`、`_`和`-`，但不允许出现空格。包名必须是唯一得，以免对外公布时产生重名冲突得误解。除此之外，NPM还建议不要在包名中附带上`node`或`js`来重复标识它是JavaScript或Node模块。
 - **description**。包简介。
-- **version**。版本号。一个语义化的版本号，在http://semver.org上有详细定义，通常为major.minor.revision格式。该版本号十分重要，常常用于一些版本控制的场合。
+- **version**。版本号。一个语义化的版本号，在[http://semver.org](http://semver.org)上有详细定义，通常为major.minor.revision格式。该版本号十分重要，常常用于一些版本控制的场合。
 - **keywords**。关键词数组，NPM中主要用来做分类搜索。一个好的关键词组有利于用户快速找到你编写的包。
 - **maintainers**。包维护者列表。每个维护者由name、email和web这三个属性组成。示例`"maintainers": [{"name": "Jackson Tian", "email": "shyvo1987@gmail.com", "web": "http://html5ify.com"}]`。NPM通过改属性进行权限认证。
 - **contributors**。贡献者列表。在开源社区中，为开源项目提供代码是经常出现的事，如果名字能出现在知名项目的`contributors`列表中，是一件比较由荣誉感的事。列表中第一个贡献应当是包作者本人。格式与维护者列表相同。
@@ -1112,7 +1112,7 @@ CommonJS包规范是理论，NPM是其中的一种实践。NPM之于Node，相�
 
 纵观Node的模块引入全程，几乎全都是同步的。尽管与Node强调异步的行为有些相反，但是它是合理的。如果前端模块也采用同步的方式来引入，那将会在用户体验上造成很大的问题。UI在初始化过程中需要花费很多时间来等待脚本加载完成。
 
-鉴于网络的原因，CommonJS为后端JavaScript指定的规范并不完全适合前端的应用场景。经过一段争执之后，AMD规范最终在前端应用场景中胜出它的全称是 Asynchronous Module Definition，即“异步模块定义”，详见https://github.com/amdjs/amdjs-api/wiki/AMD。除此之外，还有玉伯定义的CMD规范。
+鉴于网络的原因，CommonJS为后端JavaScript指定的规范并不完全适合前端的应用场景。经过一段争执之后，AMD规范最终在前端应用场景中胜出它的全称是 Asynchronous Module Definition，即[“异步模块定义”](https://github.com/amdjs/amdjs-api/wiki/AMD)，详见。除此之外，还有玉伯定义的CMD规范。
 
 ### 2.7.2 AMD规范
 
