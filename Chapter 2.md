@@ -1,22 +1,19 @@
 # 模块机制
+---
+* [2.1 CommonJS 规范](#21-commonjs-规范)
+* [2.2 Node的模块实现](#22-node的模块实现)
+* [2.3 核心模块](#23-核心模块)
+* [2.4 C/C++扩展模块](#24-cc扩展模块)
+* [2.5 模块调用栈](#25-模块调用栈)
+* [2.6 包和NPM](#26-包和npm)
+* [2.7 前后端共用模块](#27-前后端共用模块)
+* [2.8 总结](#28-总结)
 
 ---
 
 JavaScript自诞生以来，曾经没有人拿它当成一门真正的编程语言，认为它不过是一种网页小脚本而已，在web 1.0时代，这种脚本语言在网络中主要有两个作用广为流传，一个是表单校验，另一个是网页特效。另一方面，由于仓促地被创造出来，所以它自身地各种缺陷也被各种编程人员广为诟病。知道web 2.0时代，前端工程师利用它大大提升了网页上地用户体验。在这个过程中，B/S应用展现出比C/S应用优越地地方。因此JavaScirpt被广泛重视起来。
 
 在web 2.0 流行的过程中，各种前端库和框架被开发出来，他们最初用于兼容各个版本的浏览器，随后随着更多的用户需求在前端被实现，JavaScript也从表单校验迁到应用开发级别上。在这个过程中，它大致经历了工具类库、组件库、前端框架、前端应用的变迁。
-
-```flow
-st1=>start: 工具
-（浏览器兼容）
-st2=>start: 组件
-（功能模块）
-st3=>start: 框架
-（功能模块组织）
-e=>end: 应用
-（业务模块组织）
-st1->st2->st3->e
-```
 
 经历了常常的后天努力过程，JavaScript不断被类聚和抽象，以更好的组织业务逻辑。从另一个角度而言，它也道出了JavaScript先天就缺乏的一项功能：模块。
 
@@ -593,18 +590,6 @@ C/C++扩展模块属于文件模块中的一类。前面讲述文件模块的编
 
 值得注意的时，一个平台下的`.node`文件在另一个平台下时无法加载执行的，必须重新各自平台下的编译器编译为正确的`.node`文件。
 
-```flow
-st=>start: *nix or Windows C/C++源码
-op1=>operation: g++/gcc or VC++
-op2=>operation: 编译源码
-op3=>operation: .os文件 or .dll文件
-op4=>operation: 生成.node文件
-op5=>operation: 加载.so文件 or .dll文件
-op6=>operation: dlopen() 加载
-e=>end: 导出给JavaScript
-st->op1->op2->op3->op4->op5->op6->e
-```
-
 ### 2.4.1 前提条件
 
 如果想要编写高质量的C/C++扩展模块，还需要深厚的C/C++编程功底才行。除此之外，以下这些条目都是不能避开的，在了解它们之后，可以让你在编写过程中事半功倍。
@@ -720,14 +705,6 @@ Module._extensions['.node'] = process.dlopen;
 `require()`在引入`.node`文件的过程中，实际经历了4个层面上的调用。
 
 加载`.node`文件实际经历了两个步骤，第一个步骤是调用`uv_dlopen()`方法去打开动态链接库，第二个步骤是调用`uv_dlsym()`方法去找到动态链接库中`NODE_MODULE`宏定义的方法地址。这两个过程都是通过libuv库进行封装的：在\*nix平台下实际上调用的是`dlfcn.h`头文件中定义的`dlopen()`和`dlsym()`两个方法；在Windows平台则是通过`LoadLibraryExW()`和`GetProcAddress()`这两个方法实现的，它们分别加载`.so`和`.dll`（实际为.node文件）。
-
-```flow
-st1=>start: JavaScript require("./hello.node")
-st2=>start: 原生模块 process.dlopen("./hello.node", exports)
-st3=>start: libuv  uv_dlopen()/uv_dlsym()
-e=>end: *nix  dlopen()/dlsym()  Or  Windows  LoadLibraryExW()/GetProcAddress()
-st1->st2->st3->e
-```
 
 这里对libuv函数的调用充分表现Node利用libuv实现跨平台的方式，这样的情景在很多地方还会出现。
 
