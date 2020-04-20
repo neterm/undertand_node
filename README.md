@@ -9,3 +9,5 @@
 - [第三章 异步 I/O](https://github.com/onegeqian/undertand_node/blob/master/Chapter%203.md '异步I/O')
 
 - [第四章 异步编程](https://github.com/onegeqian/undertand_node/blob/master/Chapter%204.md '异步编程')
+
+- [第五章 内存控制](https://github.com/onegeqian/undertand_node/blob/master/Chapter%205.md '内存控制')
