@@ -444,68 +444,68 @@ QPS 提升到 4843.28，传输率为每秒 48612.56kb，性能接近提高一倍
   }
   ```
 
-在理想状态下，每次读取的长度就是用户指定的`highWaterMark`。但是有可能读到了文件结尾，或者文件本身就没有指定的`highWaterMark`这么大，这个预先指定的 Buffer 对象将会有部分甚于，不过好在这里的内存可以分配给下次读取时使用。pool 时常驻内存的，只有当 pool 单元剩余数量小于 128 字节时，才会重新分配一个新的 Buffer 对象。Node 源代码中分配新的 Buffer 对象的判断条件如下所示：
+  在理想状态下，每次读取的长度就是用户指定的`highWaterMark`。但是有可能读到了文件结尾，或者文件本身就没有指定的`highWaterMark`这么大，这个预先指定的 Buffer 对象将会有部分甚于，不过好在这里的内存可以分配给下次读取时使用。pool 时常驻内存的，只有当 pool 单元剩余数量小于 128 字节时，才会重新分配一个新的 Buffer 对象。Node 源代码中分配新的 Buffer 对象的判断条件如下所示：
 
-```js
-if (!pool || pool.length - pool.used < kMinPoolSpace) {
-  // discard the old pool
-  pool = null;
-  allocNewPool(this._readabelState.highWaterMark);
-}
-```
+  ```js
+  if (!pool || pool.length - pool.used < kMinPoolSpace) {
+    // discard the old pool
+    pool = null;
+    allocNewPool(this._readabelState.highWaterMark);
+  }
+  ```
 
-这里与 Buffer 的内存分配比较类似，`highWaterMark`的大小对性能有两个影响的点：
+  这里与 Buffer 的内存分配比较类似，`highWaterMark`的大小对性能有两个影响的点：
 
-- highWaterMark 设置对 Buffer 内存的分配和使用有一定的影响。
-- highWaterMark 设置国小，可能导致系统调用次数过多。
+  - highWaterMark 设置对 Buffer 内存的分配和使用有一定的影响。
+  - highWaterMark 设置国小，可能导致系统调用次数过多。
 
-文件流读取基于 Buffer 分配，Buffer 则给予 SlowBuffer 分配，这可以理解为两个维度的分配策略。如果文件较小（小于 8kb），有可能造成 slab 未能完全使用。
+  文件流读取基于 Buffer 分配，Buffer 则给予 SlowBuffer 分配，这可以理解为两个维度的分配策略。如果文件较小（小于 8kb），有可能造成 slab 未能完全使用。
 
-由于`fs.createReadStream()`内部采用`fs.read()`实现，将会引起对磁盘的系统调用，对于大文件而言，`highWaterMark`的大小决定会触发系统调用和 data 事件的次数。
+  由于`fs.createReadStream()`内部采用`fs.read()`实现，将会引起对磁盘的系统调用，对于大文件而言，`highWaterMark`的大小决定会触发系统调用和 data 事件的次数。
 
-以下为 Node 自带的基准测试，在`benchmark/fs/read-stream-throughput.js`中可以找到：
+  以下为 Node 自带的基准测试，在`benchmark/fs/read-stream-throughput.js`中可以找到：
 
-```js
-function runTest() {
-  assert(fs.statSync(filename).size === filesize);
+  ```js
+  function runTest() {
+    assert(fs.statSync(filename).size === filesize);
 
-  var rs = fs.createReadStream(filename, {
-    highWaterMark: size,
-    encoding: encoding,
-  });
+    var rs = fs.createReadStream(filename, {
+      highWaterMark: size,
+      encoding: encoding,
+    });
 
-  rs.on('open', function () {
-    bench.start();
-  });
-  var bytes = 0;
+    rs.on('open', function () {
+      bench.start();
+    });
+    var bytes = 0;
 
-  rs.on('data', function (chunk) {
-    bytes += chunk.length;
-  });
+    rs.on('data', function (chunk) {
+      bytes += chunk.length;
+    });
 
-  rs.on('end', function () {
-    try {
-      fs.unlinkSync(filename);
-    } catch (e) {
-      // TODO
-    }
+    rs.on('end', function () {
+      try {
+        fs.unlinkSync(filename);
+      } catch (e) {
+        // TODO
+      }
 
-    // MB/sec
-    bench.end(bytes / (1024 * 1024));
-  });
-}
-```
+      // MB/sec
+      bench.end(bytes / (1024 * 1024));
+    });
+  }
+  ```
 
-下面为某次执行的结果：
+  下面为某次执行的结果：
 
-```shell
-fs/read-stream-throughput.js type=buf size=1024: 46.284
-fs/read-stream-throughput.js type=buf size=4096: 139.62
-fs/read-stream-throughput.js type=buf size=65535: 681.88
-fs/read-stream-throughput.js type=buf size=1048576: 857.98
-```
+  ```shell
+  fs/read-stream-throughput.js type=buf size=1024: 46.284
+  fs/read-stream-throughput.js type=buf size=4096: 139.62
+  fs/read-stream-throughput.js type=buf size=65535: 681.88
+  fs/read-stream-throughput.js type=buf size=1048576: 857.98
+  ```
 
-从上面的执行结果我们可以看到，读取一个相同的大文件时，`highWaterMark`值得大小与读取速度的关系： 该值越大，读取速度越快。
+  从上面的执行结果我们可以看到，读取一个相同的大文件时，`highWaterMark`值得大小与读取速度的关系： 该值越大，读取速度越快。
 
 ## 6.5 总结
 
