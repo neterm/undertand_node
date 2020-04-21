@@ -2,10 +2,10 @@
 
 ---
 
-- [6.1 Buffer 结构](#61-buffer结构)
-- [6.2 Buffer 的转换](#62-buffer的转换)
-- [6.3 Buffer 的拼接](#63-buffer的拼接)
-- [6.4 Buffer 与性能](#64-buffer与性能)
+- [6.1 Buffer 结构](#61-buffer-结构)
+- [6.2 Buffer 的转换](#62-buffer-的转换)
+- [6.3 Buffer 的拼接](#63-buffer-的拼接)
+- [6.4 Buffer 与性能](#64-buffer-与性能)
 - [6.5 总结](#65-总结)
 
 ---
