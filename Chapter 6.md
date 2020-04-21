@@ -444,17 +444,15 @@ QPS 提升到 4843.28，传输率为每秒 48612.56kb，性能接近提高一倍
   }
   ```
 
-````
-
-在理想状态下，每次读取的长度就是用户指定的`highWaterMark`。但是有可能读到了文件结尾，或者文件本身就没有指定的`highWaterMark`这么大，这个预先指定的Buffer对象将会有部分甚于，不过好在这里的内存可以分配给下次读取时使用。pool时常驻内存的，只有当pool单元剩余数量小于128字节时，才会重新分配一个新的Buffer对象。Node源代码中分配新的Buffer对象的判断条件如下所示：
+在理想状态下，每次读取的长度就是用户指定的`highWaterMark`。但是有可能读到了文件结尾，或者文件本身就没有指定的`highWaterMark`这么大，这个预先指定的 Buffer 对象将会有部分甚于，不过好在这里的内存可以分配给下次读取时使用。pool 时常驻内存的，只有当 pool 单元剩余数量小于 128 字节时，才会重新分配一个新的 Buffer 对象。Node 源代码中分配新的 Buffer 对象的判断条件如下所示：
 
 ```js
-if(!pool || pool.length - pool.used < kMinPoolSpace) {
+if (!pool || pool.length - pool.used < kMinPoolSpace) {
   // discard the old pool
   pool = null;
   allocNewPool(this._readabelState.highWaterMark);
 }
-````
+```
 
 这里与 Buffer 的内存分配比较类似，`highWaterMark`的大小对性能有两个影响的点：
 
