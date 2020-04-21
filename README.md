@@ -14,4 +14,4 @@
 
 - [第六章 理解Buffer](https://github.com/onegeqian/undertand_node/blob/master/Chapter%206.md '理解Buffer')
 
-- [第七章 网络编程](https://github.com/onegeqian/undertand_node/blob/master/Chapter%206.md '理解Buffer')
+- [第七章 网络编程](https://github.com/onegeqian/undertand_node/blob/master/Chapter%207.md '网络编程')
