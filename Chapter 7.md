@@ -67,7 +67,7 @@ server.listen(8124);
 
 我们可以利用 Telnet 工具作为客户端对刚才创建的简单服务器进行会话交流：
 
-```shell
+```sh
 $ telnet 127.0.0.1 8124
 Trying 127.0.0.1...
 Connected to localhost.
@@ -85,7 +85,7 @@ server.listen('/tmp/echo.sock');
 
 通过 nc 工具进行会话，测试上面构建的 TCP 服务的代码：
 
-```shell
+```sh
 $ nc -U /tmp/echo.sock
 ...
 ```
@@ -272,7 +272,7 @@ HTTP 得以发展是 W3C 和 IETF 两个组织合作的结果，它们最终发�
 
 为了详细解释 HTTP 的报文，在启动上述服务器端代码后，我们对经典示例代码进行一次报文的获取，这里采用的工具是 curl，通过`-v`选项，可以显示这次网络通信的所有报文信息。
 
-```shell
+```sh
 λ curl -v http://127.0.0.1:1337/
 *   Trying 127.0.0.1...
 * TCP_NODELAY set
@@ -294,7 +294,7 @@ Hello World
 
 从上述信息中我们可以看到这次网络通信的报文信息分为几个部分，第一部分内容为经典的 TCP 的 3 次握手过程：
 
-```shell
+```sh
 *   Trying 127.0.0.1...
 * TCP_NODELAY set
 * Connected to 127.0.0.1 (127.0.0.1) port 1337 (#0)
@@ -302,7 +302,7 @@ Hello World
 
 第二部分是在完成握手之后，客户端向服务器端发送请求报文，如下所示：
 
-```shell
+```sh
 > GET / HTTP/1.1
 > Host: 127.0.0.1:1337
 > User-Agent: curl/7.55.1
@@ -312,7 +312,7 @@ Hello World
 
 第三部分是服务器端完成处理后，向客户端发送相应内容，包括响应头和响应体：
 
-```shell
+```sh
 < HTTP/1.1 200 OK
 < Content-Type: text/plain
 < Date: Tue, 21 Apr 2020 09:13:39 GMT
@@ -324,7 +324,7 @@ Hello World
 
 最后部分是结束会话的信息：
 
-```shell
+```sh
 * Connection #0 to host 127.0.0.1 left intact
 ```
 
@@ -380,7 +380,7 @@ res.writeHead(200, { 'Content-Type': 'text/plain' });
 
 其分为`setHeader()`和`writeHead()`两个步骤。它在 http 模块的封装下，实际生成如下报文：
 
-```shell
+```sh
 < HTTP/1.1 200 OK
 < Content-Type: text/plain
 ```
@@ -535,7 +535,7 @@ WebSocket 协议主要分为两个部分：握手和数据传输。下面我们�
 
 客户端建立连接时，通过 HTTP 发起请求报文：
 
-```shell
+```sh
 GET /chat HTTP/1.1
 Host: server.example.com
 Upgrade: websocket
@@ -547,7 +547,7 @@ Sec-WebSocket-Version： 13
 
 与普通的 HTTp 请求协议略有区别的部分在于如下这些协议头：
 
-```shell
+```sh
 Upgrade: websocket
 Connection: Upgrade
 ```
@@ -561,14 +561,14 @@ var val = crypto.createHash('sha1').update(key).digest('base64');
 
 另外，下面两个字段指定子协议和版本号：
 
-```shell
+```sh
 Sec-WebSocket-Protocol: chat, superchat
 Sec-WebSocket-Version: 13
 ```
 
 服务器端在处理完请求后，响应如下报文：
 
-```shell
+```sh
 HTTP/1.1 101 Switching Protocols
 Upgrade: websocket
 Connection: Upgrade
@@ -710,7 +710,7 @@ WebSocket 数据帧，每 8 位为一列，也即 1 个字节。其中每一位�
 
 客户端发送消息时，需要构造一个或多个数据帧协议报文。由于 hello world!较短，不存在分割多个数据帧的情况，又由于 hello world!会以文本的方式发送，它的 payload length 长度为 96（12 字节 x8 位/字节），二进制标识为 1100000。所以报文应当如下：
 
-```shell
+```sh
 fin(1) + res(000) + opcode(0001) + payload length(1100000) + masking key(32位) + payload data(hello world!加密后的二进制)
 ```
 
@@ -726,7 +726,7 @@ socket.onmessage = function (event) {
 
 服务器端再回复 yakexi 的时候，剩下的事情就无需掩码，其余相同，如下所示：
 
-```shell
+```sh
 fin(1) + res(000) + opcode(0001) + masked(0) + payload length(1100000) + payload data(yakexi的二进制)
 ```
 
@@ -757,7 +757,7 @@ TLS/SSL 是一个公钥/私钥的结构，它是一个非对称的结构，每�
 
 Node 在底层采用的是 openssl 实现 TLS/SSL 的，为此要生成公钥和私钥可以通过 openssl 完成。我们分别为服务器和客户端生成私钥。
 
-```shell
+```sh
 # 生成服务器端私钥
 $ openssl genrsa -out server.key 1024
 # 生成客户端私钥
@@ -766,7 +766,7 @@ $ openssl genrsa -out client.key 1024
 
 上述命令生成了两个 1024 位长的 RSA 私钥文件，我们可以通过它继续生成公钥：
 
-```shell
+```sh
 $ openssl rsa -in server.key -pubout -out server.pem
 $ openssl rsa -in client.key -pubout -out client.pem
 ```
@@ -783,7 +783,7 @@ $ openssl rsa -in client.key -pubout -out client.pem
 
 通过 CA 机构颁发证书通常是一个繁琐的过程，需要付出一定的经历和费用。对于中小型企业而言，多半是采用自签名证书来构建安全网络的。所谓自签名证书，就是自己扮演 CA 机构，给自己服务器端颁发签名证书。以下为生成私钥、生成 CSR 文件、通过私钥自签名生成证书的过程：
 
-```shell
+```sh
 $ openssl genrsa -out ca.key 1024
 $ openssl req -new -key ca.key -out ca.csr
 $ openssl x509 -req in ca.csr -signkey ca.key -out ca.crt
@@ -791,13 +791,13 @@ $ openssl x509 -req in ca.csr -signkey ca.key -out ca.crt
 
 上述步骤完成了扮演 CA 角色需要的文件。接下来回到服务器端，服务器端需要向 CA 机构申请签名证书。在申请签名证书之前依然要创建自己的 CSR 文件。值得注意的是，这个过程中的 Common Name 要匹配服务器域名，否则在后续的认证过程中会出错。如下是生成 CSR 文件所用命令：
 
-```shell
+```sh
 $ openssl req -new -key server.key -out server.csr
 ```
 
 得到 CSR 文件后，向我们自己的 CA 机构申请签名吧。签名过程需要 CA 的证书和私钥参与，最终颁发一个带有 CA 签名的证书：
 
-```shell
+```sh
 $ openssl x509 -req -CA ca.crt -CAkey ca.key -CAcreateserial in server.csr -out server.crt
 ```
 

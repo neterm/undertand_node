@@ -1155,7 +1155,7 @@ emitter.emit('step1');
 
   将这段代码存为`sequence.js`。执行该代码，将会得到：
 
-  ```shell
+  ```sh
   node sequence.js
   I am file2
   ```
@@ -1781,7 +1781,7 @@ var bubbleSort = eval(Wind.compile('async', function (array) {
 
   执行上述代码，将得到如下输出：
 
-  ```shell
+  ```sh
   file1
   file2
   { [Error: ENOENT, open 'file3.txt'] errno: 34, code: 'ENOENT', path: 'file3.txt' }
@@ -1861,7 +1861,7 @@ for (var i = 0; i < 100; i++) {
 
 但是如果并发量过大，我们的下层服务器将会吃不消。如果是对文件系统大量并发调用，操作系统的文件毛舒服将会被瞬间用光，则抛出如下错误：
 
-```shell
+```sh
 Error: EMFILE, too many open files
 ```
 

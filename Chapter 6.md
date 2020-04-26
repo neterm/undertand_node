@@ -386,13 +386,13 @@ http
 
 我们通过 ab 进行一次性能测试，发起 200 个并发客户端：
 
-```shell
+```sh
 $ ab -c 200 -t 100 http://127.0.0.1:8001/
 ```
 
 得到的测试结果：
 
-```shell
+```sh
 HTML transferred:         512000000 bytes
 Requests per second:      2527.64 [#/sec] (mean)
 Time per request:         79.125 [ms] (mean)
@@ -403,7 +403,7 @@ Transfer rate:            25370.16 [Kbytes/sec] received
 测试的 QPS（每秒查询次数）是 2527.64，传输率为每秒 25370.16kb。
 接下来我们打开`helloworld = new Buffer(helloworld);`的注释，使向客户端输出的是一个 Buffer 对象，无需再每次响应时进行转换。再次进行性能测试的结果如下：
 
-```shell
+```sh
 Total transferred:        513900000 bytes
 HTML transferred:         512000000 bytes
 Requests per second:      4843.28 [#/sec] (mean)
@@ -498,7 +498,7 @@ QPS 提升到 4843.28，传输率为每秒 48612.56kb，性能接近提高一倍
 
   下面为某次执行的结果：
 
-  ```shell
+  ```sh
   fs/read-stream-throughput.js type=buf size=1024: 46.284
   fs/read-stream-throughput.js type=buf size=4096: 139.62
   fs/read-stream-throughput.js type=buf size=65535: 681.88

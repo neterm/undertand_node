@@ -42,7 +42,7 @@ Node 在 JavaScript 的执行上直接受益于 V8，可以随着 V8 的升级�
 
 在 V8 中，所有的 JavaScript 对象都是通过堆来进行分配的。Node 提供了 V8 中内存使用量的查看方式，执行下面的代码，将得到输出的内存信息：
 
-```shell
+```sh
 $node
 process.memoryUsage();
 {
@@ -61,7 +61,7 @@ process.memoryUsage();
 
 当然，这个限制也不是不能打开，V8 依然提供了选项让我们使用更多的内存。Node 在启动时传递`--max-old-space-size`或`--max-new-space-size`来调整内存限制的大小：
 
-```shell
+```sh
 node --max-old-space-size=1700 test.js # 单位为MB
 node --max-new-space-size=1500 test.js # 单位为KB
 ```
@@ -185,7 +185,7 @@ V8 的垃圾回收策略主要基于分代式垃圾回收机制。在自动垃�
 
 查看垃圾回收日志的方式主要是在启动时添加--trace_gc 参数。在进行垃圾回收时，将会从标准输出中打印垃圾回收的日志信息。下面是一段示例，执行结束后，将会在 gc.log 文件中得到所有垃圾回收信息：
 
-```shell
+```sh
 node --trace_gc -e "var a = [];for (var i = 0; i< 1000000; i++) a.push(new Arrya(100));" > gc.log
 ```
 
@@ -203,13 +203,13 @@ for (var i = 0; i < 1000000; i++) {
 
 所幸，V8 提供了`linux-tick-processor`工具用于统计日志信息。该工具可以从 Node 源码的`deps/v8/tools`目录下找到，Windows 下对应的命令文件为`windows-tick-processor.bat`。将改目录添加到环境变量 path 中，即可直接调用：
 
-```shell
+```sh
 $ linux-tick-processor v8.log
 ```
 
 统计内容较多，其中垃圾回收部分：
 
-```shell
+```sh
 [GC]:
   ticks   total   nonlib    name
     2      5.4%
@@ -350,7 +350,7 @@ var foo = function () {
 
 调用`process.memoryUsage()`可以查看 Node 进程的内存占用情况：
 
-```shell
+```sh
 $node
 > process.memoryUsage()
 {
@@ -414,7 +414,7 @@ showMen();
 
 与`process.memoryUsage()`不同的是，os 模块中的`totalmem()`和`freemem()`这两个方法用于查看操作系统的内存使用情况，它们分别返回系统的总内存和闲置内存，以字节为单位。示例代码如下：
 
-```shell
+```sh
 $ node
 > os.totalmem();
 > 12865875968
@@ -629,13 +629,13 @@ http
 
 - 安装 node-heapdump
 
-  ```shell
+  ```sh
   $ npm install heapdump
   ```
 
   安装 node-heapdump 后，就可以启动服务进程，并接受客户端的请求。访问多次之后 leakArray 中就会具备大量的元素。这个时候我们通过向服务进程发送 SIGUSR2 信号，让 node-heapdump 抓拍一份堆内存的快照。
 
-  ```shell
+  ```sh
   $ kill -USR2 <pid>
   ```
 

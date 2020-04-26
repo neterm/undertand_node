@@ -671,7 +671,7 @@ C/C++扩展模块与内建模块的套路一样，将方法挂载在`target`对�
 
 然后调用：
 
-```shell
+```sh
 node-gyp configure
 ```
 
@@ -679,7 +679,7 @@ node-gyp configure
 
 继续执行如下代码：
 
-```shell
+```sh
 node-gyp build
 ```
 
@@ -949,7 +949,7 @@ CommonJS 包规范是理论，NPM 是其中的一种实践。NPM 之于 Node，�
 
   对于一些没有发布到 NPM 上的包，或是因为网络原因导致无法直接安装的包，可以通过将包下载到本地，然后进行本地安装。本地安装只需要为 NPM 指明`package.json`文件所在的位置即可：它可以是一个包含`package.json`的存档文件，也可以是一个 URL 地址，也可以是一个目录下有`package.json`文件的目录位置。具体参数：
 
-  ```shell
+  ```sh
   npm install <tarball file>
   npm install <tarball url>
   npm install <folder>
@@ -959,13 +959,13 @@ CommonJS 包规范是理论，NPM 是其中的一种实践。NPM 之于 Node，�
 
   如果不能通过官方源安装，可以通过镜像源安装。在执行命令时，添加`--registry=http://registry.url`即可，示例如下：
 
-  ```shell
+  ```sh
   npm install underscore --registry=http://registry.url
   ```
 
   如果使用过程中几乎都采用镜像源安装，可以执行以下命令指定默认安装源：
 
-  ```shell
+  ```sh
   npm config set registry http://registry.url
   ```
 
@@ -1026,13 +1026,13 @@ CommonJS 包规范是理论，NPM 是其中的一种实践。NPM 之于 Node，�
 
   通常一个包只有一个人拥有权限进行发布。如果需要多人进行发布，可以使用`npm owner`命令帮助你管理所有者
 
-  ```shell
+  ```sh
   npm owner ls express
   ```
 
   使用这个命令，也可以添加包的拥有者，删除一个包的拥有者：
 
-  ```shell
+  ```sh
   npm owner ls <package name>
   npm owner add <user> <package name>
   npm owner rm <user> <package name>
@@ -1042,7 +1042,7 @@ CommonJS 包规范是理论，NPM 是其中的一种实践。NPM 之于 Node，�
 
 在使用 NPM 的过程中，或许你不能确认当前目录下能否通过`require()`顺利引入想要的包，这时可以执行`npm ls`分析包。这个命令可以为你分析出当前路径下能够通过模块路径找到的所有包，并生成依赖树，如下：
 
-```shell
+```sh
 `-- connect@3.7.0
   +-- debug@2.6.9
   | `-- ms@2.0.0
