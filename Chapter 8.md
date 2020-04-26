@@ -2,6 +2,15 @@
 
 ---
 
+- [8.1 基础功能](#81-基础功能)
+- [8.2 数据上传](#82-数据上传)
+- [8.3 路由解析](#83-路由解析)
+- [8.4 中间件](#84-中间件)
+- [8.5 页面渲染](#85-页面渲染)
+- [8.6 总结](#86-总结)
+
+---
+
 如今看来，Web 应用俨然是互联网的主角，伴随 Web 1.0、Web 2.0 一路走来，HTTP 占据了网络中大多数流量。伴随着移动互联网时代的到来，Web 又开始在移动浏览器上发挥光和热。在 Web 标准化的努力过后，Web 又开始朝向应用化发展，JavaScript 在前端变得炙手可热。许多原本在服务端实现的业务细节，纷纷迁移到浏览器端，前端 MV\*的框架也日趋成熟。与之逆流的是，Node 的出现将前后端的壁垒再次打破，JavaScript 这门最初就能运行在服务器端的语言，在经历了前端的辉煌和后端的低迷后，借助事件驱动和 V8 的高性能，再次成为了服务器端的佼佼者。在 Web 应用中，JavaScript 将不再仅仅出现在前端浏览器中，因为 Node 的出现，“前端”将会被重新定义。
 
 为了生仍 Web 应用的开发工作，各种语言、模式、框架层出不穷。单从框架而言，在后端数得出来的大名就有 Structs、CodeIgniter、Rails、Django、web.py 等，在前端也有知名的 BackBone、Knockout.js、AngularJS、Meteor 等。在 Node 中，又 Connect 中间件，也有 Express 这样的 MVC 框架。值得注意的是 Meteor 框架，他在后端是 Node，在前端是 JavaScript，它是一个融合了前后端 JavaScript 的框架。
@@ -203,7 +212,7 @@ var query = url.parse(req.url, true).query;
 
 ### 8.1.4 Cookie
 
-#### 1.初识 Cookie
+#### 1. 初识 Cookie
 
 在 Web 应用中，请求路径和查询字符串对业务至关重要，通过它们已经可以进行很多业务操作了，但是 HTTP 是一个无状态的协议，现实中的业务确是需要一定的状态的，否则无法区分用户之间的身份。如何标识和认证一个用户，最早的方案就是 Cookie（曲奇饼）了。
 
@@ -316,7 +325,7 @@ setHeader('Set-Cookie', [serialize('foo', 'bar'), serialize('baz', 'val')]);
 
 这时会在报文头中形成两条 Set-Cookie 字段。
 
-#### 2.Cookie 的性能影响
+#### 2. Cookie 的性能影响
 
 由于 Cookie 的实现机制，一旦服务器端向客户端发送了设置 Cookie 的意图，除非 Cookie 过期，否则客户端每次请求都会发送 Cookie 到服务器端，一旦设置 Cookie 过多，将会导致报头较大。大多数 Cookie 并不需要每次都用上，因为这会造成带宽的部分浪费。在 YSlow 的性能优化规则中有这么一条：
 
@@ -549,7 +558,7 @@ res.writeHead = function () {
 };
 ```
 
-#### 2.Session 与安全
+#### 2. Session 与安全
 
 从前文可以知道，尽管我们数据都放置在后端了，使得它能保障安全，但是无论通过 Cookie，还是查询字符串的实现，Session 的口令依然保存在客户端，这里回存在口令被盗用的情况。如果 Web 应用的用户十分多，自行设计的随机算法的一些口令之就有理论机会命中有效的口令之。一旦口令被伪造，服务器端的数据可能被间接利用。这里提到的 Session 的安全，就主要指如何让这个口令更加安全。
 
@@ -854,7 +863,7 @@ var mime = function (req) {
 };
 ```
 
-#### 1.JSON 文件
+#### 1. JSON 文件
 
 如果从客户端提交 JSON 内容，这对于 Node 来说，要处理它都不需要额外的任何库：
 
@@ -874,7 +883,9 @@ var handle = function (req, res) {
 };
 ```
 
-#### 2. 解析 XML 文件稍微复杂一点，但是社区有支持 XML 文件到 JSON 对象转换的库，这里以 xml2js 模块为例：
+#### 2. XML 文件
+
+解析 XML 文件稍微复杂一点，但是社区有支持 XML 文件到 JSON 对象转换的库，这里以 xml2js 模块为例：
 
 ```js
 var xml2js = require('xml2js');
@@ -984,7 +995,7 @@ function (req, res) {
 
 Node 提供了相对底层的 API，通过它构建各种各样的 Web 应用都是相对容易的，但是在 Web 应用中，不得不重视与数据上传相关的安全问题。由于 Node 与前端 JavaScript 的近缘性，前端 JavaScropt 甚至可以上传到服务器直接执行，但是这里我们并不讨论这样危险的动作，而是介绍内存和 CSRF 相关的安全问题。
 
-#### 1.内存限制
+#### 1. 内存限制
 
 在解析表单、JSON 和 XML 部分，我们采用的策略是先保存用户提交的所有数据，然后再解析处理，然后才传递给业务逻辑。这种策略存在的潜在问题是，它仅仅适合数据量小的提交请求，一旦数据量过大，将发生内存被占光的情况。攻击者通过客户端能够十分容易地模拟伪造大量数据，如果攻击者每次提交 1MB 地内容，那么只要并发请求数量一大，内存就会很快被吃光。要解决这个问题，主要有两个方案：
 
@@ -1022,7 +1033,7 @@ function (req, res) {
 
 从上面的代码我们可以看出，数据是由包含 Content-Length 的请求报文判断是否长度超过限制，超过则直接响应 413 状态码。对于没有 Content-Length 的请求报文，略微简略一点，在每个 data 事件中判定即可。一旦超过限制值，服务器停止接收新的数据片段。如果是 JSON 文件或 XML 文件，极有可能无法完成解析。对于上限的 Web 应用，添加一个上传大小限制十分有利于保护服务器，在遭遇攻击时，能镇定从容因应对。
 
-#### 2.CSRF
+#### 2. CSRF
 
 CSRF 的全程是 Cross-Site Request Forgery，中文意思为跨站请求伪造。前文提及了服务器端与客户端通过 Cookie 来标识和认证用户，通常而言，用户通过浏览器访问服务器端的 Session ID 是无法被第三方知道的，但是 CSRF 的攻击者并不需要知道 Session ID 就能让用户中招。
 
@@ -1114,11 +1125,11 @@ function (req, res) {
 
 ### 8.3.1 文件路径型
 
-#### 1.静态文件
+#### 1. 静态文件
 
 这种方式的路由在路径解析的部分有过简单描述，其让人舒服的地方在于 URL 的路径与网站目录路径一直，无须转换，非常直观。这种路由的处理方式也十分简单，将请求路径对应的文件发送给客户端即可。这在前文路径解析部分有做介绍，不再重复。
 
-#### 2.动态文件
+#### 2. 动态文件
 
 在 MVC 模式流行起来之前，根据文件路径执行动态脚本也是基本的路由方式，它的处理原理是 Web 服务器根据 URL 路径找到对应的文件，比如`/index.asp`或`/index.php`。Web 服务器根据文件名后缀去寻找脚本解析器，并传入 HTTP 请求的上下文。
 
@@ -1144,7 +1155,7 @@ MVC 模型的主要思想是将业务逻辑按职责分离，主要分为以下�
 
 控制器如何使用模型和如何渲染页面，各种实现都大同小异，我们在后续章节中再展开，此处暂且略过。如何根据 URL 做路由映射，这里有两个分支实现。一种方式是通过手工关联映射，一种是自然关联映射。前者会有一个对应的路由文件来将 URL 映射到对应的控制器，后者没有这样的文件。
 
-#### 1.手工映射
+#### 1. 手工映射
 
 手工映射除了需要手工配置路由较为原始外，它对 URL 的要求十分灵活，几乎没有格式上的限制。如下的 URL 格式都能自由映射：
 
@@ -1695,7 +1706,9 @@ function (req, res) {
 
 综上所述，通过中间件和路由的协作，我们不知不觉间已经将复杂的事情简化下来，Web 应用开发者可以只关注业务开发就能胜任整个开发工作。
 
-#### 8.4.1 但是等等，如果某个中间件出现错误该怎么办？我们需要为自己构建的 Web 应用的稳定性和健壮性负责。于是我们为 next 方法添加 err 参数，并捕获中间件直接抛出的同步异常：
+#### 8.4.1 异常处理
+
+但是等等，如果某个中间件出现错误该怎么办？我们需要为自己构建的 Web 应用的稳定性和健壮性负责。于是我们为 next 方法添加 err 参数，并捕获中间件直接抛出的同步异常：
 
 ```js
 var handle = function (req, res, stack) {
@@ -1777,7 +1790,7 @@ var handle500 = function (err, req, res, stack) {
 - 编写高效的中间件。
 - 合理利用路由，避免不必要的中间件执行。
 
-#### 1.编写高效的中间件
+#### 1. 编写高效的中间件
 
 编写高效的中间件其实就是提升单个处理单元的处理速度，以早调用`next()`执行后续逻辑。需要直到的事情是，一旦中间件被匹配，那么每个请求都会使该中间件执行一次，哪怕它只是
 浪费 1ms 的执行事件，都会让我们的 QPS 显著下讲。常见的优化方法有几种。
@@ -1786,7 +1799,7 @@ var handle500 = function (err, req, res, stack) {
 - 缓存需要重复计算的结果（需要控制缓存用量，原因在第五章阐述过）。
 - 避免不必要的计算。比如 HTTP 报文体的解析，对于 GET 方法完全不需要。
 
-#### 2.合理使用路由
+#### 2. 合理使用路由
 
 在拥有一堆高效的中间件后，并不意味着每个中间件我们都使用，合理的路由使得不必要的中间件不参与请求处理的过程。这里以一个示例来说明该问题。
 
@@ -1831,7 +1844,7 @@ app.use('/public', staticFile);
 
 对于过去流行的 ASP、HPH、JSP 等动态网页技术，页面渲染时一种内置的功能。但对于 Node 来说，它并没有这样的内置功能，在本节的介绍中，你会看到正式因为这个标准功能的缺失，我们可以更贴近底层，发展出更多更好的渲染技术，社区的创造力使得 Node 在 HTTP 相应上呈现出更加丰富多彩的状态。
 
-### 8.5 内容响应
+### 8.5.1 内容响应
 
 在第七章我们介绍了 http 模块封装了对请求报文和响应报文的操作，这里我们则展开说明应用层该如何使用响应的封装。服务器端响应的报文，最终都要被终端处理。这个终端可能是命令行终端，也可能是代码终端，也有可能是浏览器。服务器端的响应从一定程度上决定或只是了客户端该如何处理响应的内容。
 
@@ -2110,7 +2123,7 @@ Function()构造接受多个参数，最后一个参数为函数体的内容，�
 
   因此，在模板技术的使用中，时刻不要忘记转义，尤其是与输入有关的变量一定要转义。
 
-#### 3.模板逻辑
+#### 3. 模板逻辑
 
 尽管模板技术已经将业务逻辑与视图部分分离开来，但是视图上还是会存在一些逻辑来控制页面的最终渲染。为了让上述模板变得更强大一点，我们为它添加逻辑代码，使得模板可以像 ASP、PHP 那样控制页面渲染。譬如下面的代码，结果 HTML 与输入数据相关：
 
@@ -2214,7 +2227,7 @@ render(compile(tpl), { items: [{ name: 'Jacson' }, { name: '朴灵' }] });
 
 如此，我们实现的模板引擎已经能够处理输出和逻辑了，视图的渲染逻辑不成问题。
 
-#### 4.继承文件系统
+#### 4. 继承文件系统
 
 前文我们实现的 compile()和 render()已经能够实现将输入的模板字符串进行编译和替换的功能。如果与前文的 HTTP 响应对象组合起来处理的话，我们响应一个客户端的请求大致如下：
 
@@ -2352,7 +2365,7 @@ var compile = function (str) {
 };
 ```
 
-#### 6.布局视图
+#### 6. 布局视图
 
 子模板主要是为了重用模板和降低模板的复杂度。子模板的另一种方式就是布局视图（layout)，布局视图又称母版页，它与子模板的原理相同，但是场景稍微有区别。一般而言模板指定了子模板，那它的子模板就无法进行替换了，子模板被嵌入到多个父母版中属于正常需求，但是如果多个父模板中只是嵌入的子视图不同，模板内容却完全一样，也会出现重复。比如：
 
@@ -2515,17 +2528,17 @@ app.get('/profile', function (req, res) {
 });
 ```
 
-问题在于我们的页面，最终的HTML要在所有的数据获取完成后才输出到浏览器端。Node通过异步已经将多个数据源的获取并行起来了，最终的页面输出速度取决于这两个数据请求中响应时间慢的那个。在解决响应数据之前，用户看到的页面是空白画面，这时十分不友好的用户体验。
+问题在于我们的页面，最终的 HTML 要在所有的数据获取完成后才输出到浏览器端。Node 通过异步已经将多个数据源的获取并行起来了，最终的页面输出速度取决于这两个数据请求中响应时间慢的那个。在解决响应数据之前，用户看到的页面是空白画面，这时十分不友好的用户体验。
 
-Bigpipe的解决思路则讲师将页面分割成多个部分（pagelet)，先向用户输出没有数据的布局（框架），将每个每个部分输出到前端，再最终渲染填充框架，完成整个网页的渲染。这个过程中需要前端JavaScript的参与，它负责将后续输出的数据渲染到页面上。
+Bigpipe 的解决思路则讲师将页面分割成多个部分（pagelet)，先向用户输出没有数据的布局（框架），将每个每个部分输出到前端，再最终渲染填充框架，完成整个网页的渲染。这个过程中需要前端 JavaScript 的参与，它负责将后续输出的数据渲染到页面上。
 
-Bigpipe则是一个需要前后端配合实现的优化技术，这个技术有几个中药店。
+Bigpipe 则是一个需要前后端配合实现的优化技术，这个技术有几个中药店。
 
 - 页面布局框架（无数据的）。
 - 后端持续性的数据输出。
 - 前后端渲染。
 
-#### 1. 页面布局框架
+#### 1.页面布局框架
 
 页面布局框架依然由后端渲染而出：
 
@@ -2534,69 +2547,69 @@ var cache = {};
 var layout = 'layout.html';
 
 app.get('/profile', function (req, res) {
-  if(!cache[layout]) {
+  if (!cache[layout]) {
     cache[layout] = fs.readFileSync(path.join(VIEW_FOLDER, layout), 'utf8');
   }
 
-  res.writeHead(200, {'Content-Type': 'text/html'});
+  res.writeHead(200, { 'Content-Type': 'text/html' });
   res.write(render(compile(cache[layout])));
   //TODO
 });
 ```
 
-这个布局文件中引入必要的前端脚本，如JQuery、Underscore等常用库，其次要引入我们重要的前端脚本，这里的文件名为bagpipe.js。整体模板文件如下：
+这个布局文件中引入必要的前端脚本，如 JQuery、Underscore 等常用库，其次要引入我们重要的前端脚本，这里的文件名为 bagpipe.js。整体模板文件如下：
 
 ```html
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>Bagpipe示例</title>
-  <script src="jquery.js"></script>
-  <script src="underscore.js"></script>
-  <script src="bagpipe.js"></script>
-</head>
-<body>
-<div id="body"></div>
-<script type="text/template" id="tpl_body">
-  <div><%=articles%></div>
-</script>
-<div id="footer"></div>
-<script type="text/template" id="tpl_footer">
-<div><%=users%></div>
-</script>
-</body>
-<script type="text/javascript">
-var bigpipe = new Bigpipe();
-bigpipe.ready('articles', function (data) {
-  $('#body').html(_.render($('#tpl_body').html(), {articles: data}));
-});
+  <head>
+    <meta charset="UTF-8" />
+    <title>Bagpipe示例</title>
+    <script src="jquery.js"></script>
+    <script src="underscore.js"></script>
+    <script src="bagpipe.js"></script>
+  </head>
+  <body>
+    <div id="body"></div>
+    <script type="text/template" id="tpl_body">
+      <div><%=articles%></div>
+    </script>
+    <div id="footer"></div>
+    <script type="text/template" id="tpl_footer">
+      <div><%=users%></div>
+    </script>
+  </body>
+  <script type="text/javascript">
+    var bigpipe = new Bigpipe();
+    bigpipe.ready('articles', function (data) {
+      $('#body').html(_.render($('#tpl_body').html(), { articles: data }));
+    });
 
-bigpipe.ready('copyright', function (data) {
-  $("#footer").html(_.render($('#tpl_footer').html(),{users: data}));
-});
-</script>
+    bigpipe.ready('copyright', function (data) {
+      $('#footer').html(_.render($('#tpl_footer').html(), { users: data }));
+    });
+  </script>
 </html>
 ```
 
-#### 2.持续数据输出
+#### 2. 持续数据输出
 
 模板输出后，整个页面的渲染并没有结束，但用户已经看到了整个页面的大体样子。接下来我们继续输出，与普通的数据输出不同，这里的数据输出之后被前端脚本处理，是故需要对它进行封装处理：
 
 ```js
 app.get('/profile', function (req, res) {
-  if(cache[layout]) {
+  if (cache[layout]) {
     cache[layout] = fs.readFileSync(path.join(VIEW_FOLDER, layout), 'utf8');
   }
 
-  res.writeHead(200, {'Content-Type': 'text/html'});
+  res.writeHead(200, { 'Content-Type': 'text/html' });
   res.write(render(compile(cache[layout])));
 
   ep.all('users', 'articles', function () {
     res.end();
   });
 
-  ep.fail(function(err) {
+  ep.fail(function (err) {
     res.end();
   });
 
@@ -2617,28 +2630,32 @@ app.get('/profile', function (req, res) {
 res.write('<script>bigpipe.set("articles", ' + JSON.stringify(data) + ');</script>');
 ```
 
-这样最终HTML代码的尾巴上还应该由如下这样的代码：
+这样最终 HTML 代码的尾巴上还应该由如下这样的代码：
 
 ```html
-<script>bigpipe.set("articles", "I am article");</script>
-<script>bigpipe.set("copyright", "I am copyright");</script>
+<script>
+  bigpipe.set('articles', 'I am article');
+</script>
+<script>
+  bigpipe.set('copyright', 'I am copyright');
+</script>
 ```
 
-这两行代码的顺序取决于谁先完成两次异步调用。由于Node非阻塞的特性，多次异步调用可以并行执行，谁先结束谁就可以快速推送到HTML页面上，随着前端脚本的执行，就可以更快地渲染到页面上。
+这两行代码的顺序取决于谁先完成两次异步调用。由于 Node 非阻塞的特性，多次异步调用可以并行执行，谁先结束谁就可以快速推送到 HTML 页面上，随着前端脚本的执行，就可以更快地渲染到页面上。
 
-相比Facebook原始地Bigpipe应用在PHP这类阻塞式环境中，Node在数据获取上可以并行进行，使得Big匹配更具效果。
+相比 Facebook 原始地 Bigpipe 应用在 PHP 这类阻塞式环境中，Node 在数据获取上可以并行进行，使得 Big 匹配更具效果。
 
 #### 3. 前端渲染
 
-前文地bigpipe.ready()和bigpipe.set()是整个前端的渲染机制，前者以一个key注册一个事件，后者则触发一个事件，依次完成页面的渲染机制。这两个函数定义在bigpipe.js文件中，如下所示：
+前文地 bigpipe.ready()和 bigpipe.set()是整个前端的渲染机制，前者以一个 key 注册一个事件，后者则触发一个事件，依次完成页面的渲染机制。这两个函数定义在 bigpipe.js 文件中，如下所示：
 
 ```js
 var Bigpipe = function () {
   this.callbacks = {};
-}
+};
 
 Bigpipe.prototype.ready = function (key, callback) {
-  if(!this.callbacks[key]) {
+  if (!this.callbacks[key]) {
     this.callbacks[key] = [];
   }
 
@@ -2655,14 +2672,14 @@ Bigpipe.prototype.set = function (key, data) {
 
 #### 4. 小结
 
-Bigpipe将网页布局和数据渲染分离，使得用户在视觉上觉得网页提前渲染好了，其随着数据输出的过程逐步渲染页面，使得用户能够感知页面是活的。这远比一开始给出空白页面，然后在某个时候突然渲染好带给用户的体验更好。Node在这个过程中，其异步特性使得输出能够并行，数据的输出与数据调用的顺序无关，越早调用完的数据可以越早渲染到页面中，这个特性使得Bigpipe更趋完美。
+Bigpipe 将网页布局和数据渲染分离，使得用户在视觉上觉得网页提前渲染好了，其随着数据输出的过程逐步渲染页面，使得用户能够感知页面是活的。这远比一开始给出空白页面，然后在某个时候突然渲染好带给用户的体验更好。Node 在这个过程中，其异步特性使得输出能够并行，数据的输出与数据调用的顺序无关，越早调用完的数据可以越早渲染到页面中，这个特性使得 Bigpipe 更趋完美。
 
-要完成Bigpipe这样逐步渲染页面的过程，其实通过Ajax也能完成，但是Ajax的背后是HTTP调用，要耗费更多的网络连接，Bigpipe获取数据则于当前页面共用相同的网络连接，开销是分销。
+要完成 Bigpipe 这样逐步渲染页面的过程，其实通过 Ajax 也能完成，但是 Ajax 的背后是 HTTP 调用，要耗费更多的网络连接，Bigpipe 获取数据则于当前页面共用相同的网络连接，开销是分销。
 
-完成Bigpipe所要涉及的细节较多，比MVC中的直接渲染要更复杂许多，建议在网站重要的且数据请求事件较长的页面中使用。
+完成 Bigpipe 所要涉及的细节较多，比 MVC 中的直接渲染要更复杂许多，建议在网站重要的且数据请求事件较长的页面中使用。
 
 ## 8.6 总结
 
-本章涉及的内容较为丰富，在Web应用的整个构建过程中，从处理请求到响应请求的整个过程都有原理性阐述，整理本章细节就可以完成一个功能完备的Web开发框架。过去的各种Web技术，随着框架和库的成型，开发者往往迷糊地知道应用框架和库，却不知道细节的实现，这好比没有地图却在野地里行进。本章的内容希望能为Node开发者带来地图似的启发，在开发Web应用时能够心有轮廓，明了细微。
+本章涉及的内容较为丰富，在 Web 应用的整个构建过程中，从处理请求到响应请求的整个过程都有原理性阐述，整理本章细节就可以完成一个功能完备的 Web 开发框架。过去的各种 Web 技术，随着框架和库的成型，开发者往往迷糊地知道应用框架和库，却不知道细节的实现，这好比没有地图却在野地里行进。本章的内容希望能为 Node 开发者带来地图似的启发，在开发 Web 应用时能够心有轮廓，明了细微。
 
-现在知名和成熟的Web框架和Connect、Express等，本章中的内容在这些框架中都有实现，因为行文的原因，本章中的代码实现得较为粗糙，实际使用请使用这些成熟框架。
+现在知名和成熟的 Web 框架和 Connect、Express 等，本章中的内容在这些框架中都有实现，因为行文的原因，本章中的代码实现得较为粗糙，实际使用请使用这些成熟框架。
