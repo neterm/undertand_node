@@ -2,12 +2,12 @@
 
 ---
 
-- [1.1 Node 的诞生历程](#11-node的诞生历程)
-- [1.2 Node 的命名与起源](#12-node的命名与起源)
-- [1.3 Node 给 JavaScript 带来的意义](#13-node给javascript带来的意义)
-- [1.4 Node 的特点](#14-node的特点)
-- [1.5 Node 的应用场景](#15-node的应用场景)
-- [1.6 Node 的使用者](#16-node的使用者)
+- [1.1 Node 的诞生历程](#11-node-的诞生历程)
+- [1.2 Node 的命名与起源](#12-node-的命名与起源)
+- [1.3 Node 给 JavaScript 带来的意义](#13-node-给javascript-带来的意义)
+- [1.4 Node 的特点](#14-node-的特点)
+- [1.5 Node 的应用场景](#15-node-的应用场景)
+- [1.6 Node 的使用者](#16-node-的使用者)
 
 ---
 

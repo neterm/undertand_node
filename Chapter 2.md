@@ -3,11 +3,11 @@
 ---
 
 - [2.1 CommonJS 规范](#21-commonjs-规范)
-- [2.2 Node 的模块实现](#22-node的模块实现)
+- [2.2 Node 的模块实现](#22-node-的模块实现)
 - [2.3 核心模块](#23-核心模块)
 - [2.4 C/C++扩展模块](#24-cc扩展模块)
 - [2.5 模块调用栈](#25-模块调用栈)
-- [2.6 包和 NPM](#26-包和npm)
+- [2.6 包和 NPM](#26-包和-npm)
 - [2.7 前后端共用模块](#27-前后端共用模块)
 - [2.8 总结](#28-总结)
 
@@ -58,7 +58,7 @@ CommonJS 对模块的定义十分简单，主要分为模块引用、模块定�
 模块引用的示例代码如下：
 
 ```javascript
-var math = require('math');
+var math = require('math')
 ```
 
 在 CommonJS 规范中，存在`require()`方法，这个方法接受模块标识，以此引入一个模块的 API 到当前上下文中。
@@ -73,22 +73,22 @@ exports.add = function () {
   var sum = 0,
     i = 0,
     args = arguments,
-    l = args.length;
+    l = args.length
   while (i < l) {
-    sum += args[i++];
+    sum += args[i++]
   }
-  return sum;
-};
+  return sum
+}
 ```
 
 在另一个文件中，我们通过`require()`方法引入模块后，就能调用定义的属性和方法了：
 
 ```javascript
 //program.js
-var math = require('math');
+var math = require('math')
 exports.increment = function (val) {
-  return math.add(val, 1);
-};
+  return math.add(val, 1)
+}
 ```
 
 #### 3. 模块标识
@@ -161,18 +161,18 @@ Node 中的模块分为两类：一类是 Node 提供的模块，称为核心模
 在 Linux 下，你可能得到的是这样一个数组输出：
 
 ```javascript
-[
+;[
   '/home/jackson/research/node_modules',
   '/home/jackson/node_modules',
   '/home/node_modules',
   '/node_modules',
-];
+]
 ```
 
 而在 Windows 下，也许是这样：
 
 ```javascript
-['c:\\nodejs\\node_modules', 'c:\\node_modules'];
+;['c:\\nodejs\\node_modules', 'c:\\node_modules']
 ```
 
 可以看出，模块路径的生成规则：
@@ -212,16 +212,16 @@ Node 中的模块分为两类：一类是 Node 提供的模块，称为核心模
 
 ```javascript
 function Module(id, parent) {
-  this.id = id;
-  this.exports = {};
-  this.parent = parent;
+  this.id = id
+  this.exports = {}
+  this.parent = parent
   if (parent && parent.children) {
-    parent.children.push(this);
+    parent.children.push(this)
   }
 
-  this.filename = null;
-  this.loaded = false;
-  this.children = [];
+  this.filename = null
+  this.loaded = false
+  this.children = []
 }
 ```
 
@@ -239,20 +239,20 @@ function Module(id, parent) {
 ```javascript
 // Native extension for .json
 Module._extensions['.json'] = function (module, filename) {
-  var content = NativeModule.require('fs').readFileSync(filename, 'utf8');
+  var content = NativeModule.require('fs').readFileSync(filename, 'utf8')
   try {
-    module.exports = JSON.parse(stripBOM(content));
+    module.exports = JSON.parse(stripBOM(content))
   } catch (err) {
-    err.message = filename + ': ' + err.message;
-    throw err;
+    err.message = filename + ': ' + err.message
+    throw err
   }
-};
+}
 ```
 
 其中，`Module._extensions`会被赋值给`require()`的`extensions`属性，所以通过代码中访问`require.extensions`可以知道系统中已有的扩展加载方式。编写如下代码测试下：
 
 ```javascript
-console.log(require.extensions);
+console.log(require.extensions)
 ```
 
 得到的执行结果如下：
@@ -272,12 +272,12 @@ console.log(require.extensions);
 事实上，在编译过程中，Node 对获取的 JavaScript 文件内容进行了头尾包装。在头部添加了`(function (exports, require, module, __filename, __dirname){\n`，在尾部添加了`});`。最终一个正常的 JavaScript 就被包装成了如下样子：
 
 ```javascript
-(function (exports, require, module, __filename, __dirname) {
-  var math = require('math');
+;(function (exports, require, module, __filename, __dirname) {
+  var math = require('math')
   exports.area = function (radius) {
-    return Math.PI * radius * radius;
-  };
-});
+    return Math.PI * radius * radius
+  }
+})
 ```
 
 这样每个模块之间都进行了作用域隔离。包装之后的代码会通过`vm`原生模块中的`runInThisContext()`方法执行（类似`eval`，只是具有明确上下文，不污染全局），返回一个具体的`function`对象。最后将当前模块对象的`exports`属性、`require()`方法、`module`（模块对象自身），以及在文件定位中得到的完整文件路径和文件目录作为参数传递给这个`function()`执行。
@@ -291,20 +291,20 @@ console.log(require.extensions);
 ```javascript
 exports = function () {
   // My Class
-};
+}
 ```
 
 但是通常会得到一个失败的结果。其原因在于，`exports`对象是通过形参的方式传入的，直接赋值形参会改变形参的引用，但并不能改变作用域外的值。
 
 ```javascript
 var change = function (a) {
-  a = 100;
-  console.log(a); // => 100
-};
+  a = 100
+  console.log(a) // => 100
+}
 
-var a = 10;
-change(a);
-console.log(a); // => 10
+var a = 10
+change(a)
+console.log(a) // => 10
 ```
 
 如果要达到`require`引入一个类的效果，请赋值给`module.exports`对象。这个迂回方案不改变形参的引用。
@@ -370,13 +370,13 @@ JavaScript 核心模块的定义如下面代码所示，源文件通过`process.
 
 ```javascript
 function NativeModule(id) {
-  this.filename = id + '.js';
-  this.id = id;
-  this.exports = {};
-  this.loaded = false;
+  this.filename = id + '.js'
+  this.id = id
+  this.exports = {}
+  this.loaded = false
 }
-NativeModule._source = process.binding('natives');
-NativeModule._cache = {};
+NativeModule._source = process.binding('natives')
+NativeModule._cache = {}
 ```
 
 ### 2.3.2 C/C++核心模块的编译过程
@@ -499,7 +499,7 @@ static Handle<Value> Binding(const Arguments& args) {
 这个方法不仅可以导出内建方法，还能导出一些别的内容。前面提到的 JavaScript 核心文件被转换成 C/C++数组存储后，便是通过`process.binding('natives')`取出放置在`NativeModule._source`中的：
 
 ```javascript
-NativeModule._source = process.binding('natives');
+NativeModule._source = process.binding('natives')
 ```
 
 该方法将通过`js2c.py`工具转换出的字符串数组取出，然后重新转换为普通字符串，以对 JavaScript 核心模块进行编译和执行。
@@ -520,8 +520,8 @@ NativeModule._source = process.binding('natives');
 
 ```javascript
 exports.sayHello = function () {
-  return 'Hello World!';
-};
+  return 'Hello World!'
+}
 ```
 
 编写内建模块通常分两步完成：编写头文件和编写 C/C++文件。
@@ -572,8 +572,8 @@ NODE_MODULE(node_hello,node::Init_Hello);
 编译和安装后，直接在命令行中运行以下代码，将会得到期望的效果：
 
 ```javascript
-var hello = process.binding('hello');
-hello.sayHello(); // => Hello Wolrd!
+var hello = process.binding('hello')
+hello.sayHello() // => Hello Wolrd!
 ```
 
 至此，原生编写过程中需要注意的细节都已表述过了。可以看出，简单的模块通过 JavaScript 来编写可以大大提高生产效率。这里我们写作本届的目的是希望有能力的读者可以深入 Node 的核心模块，去学习它或者改进它。
@@ -616,8 +616,8 @@ C/C++扩展模块属于文件模块中的一类。前面讲述文件模块的编
 
 ```javascript
 exports.sayHello = function () {
-  return 'Hello World!';
-};
+  return 'Hello World!'
+}
 ```
 
 新建 hello 目录作为自己的项目位置，编写`hello.cc`并将其存储到`src`目录下，相关代码如下：
@@ -699,7 +699,7 @@ console.log(hello.sayHello());
 对于以`.node`为扩展名的文件，Node 将会调用`process.dlopen()`方法去加载文件：
 
 ```javascript
-Module._extensions['.node'] = process.dlopen;
+Module._extensions['.node'] = process.dlopen
 ```
 
 对于调用者而言，`require()`是轻松愉快的。对于扩展模块的编写者而言，`process.dlopen()`中隐含的过程值得了解一番。
@@ -940,7 +940,7 @@ CommonJS 包规范是理论，NPM 是其中的一种实践。NPM 之于 Node，�
   事实上，通过全局模式安装的所有模块包都被安装进了一个统一的目录下，这个目录可以通过如下方式推算出来：
 
   ```javascript
-  path.resolve(process.execPath, '..', '..', 'lib', 'node_modules');
+  path.resolve(process.execPath, '..', '..', 'lib', 'node_modules')
   ```
 
   如果 Node 可执行文件的位置是`/usr/local/bin/node`，那么模块目录就是`/usr/local/lib/node_modules`。最后，通过软连接的方式将`bin`字段配置的可执行文件链接到 Node 的可执行目录下。
@@ -996,8 +996,8 @@ CommonJS 包规范是理论，NPM 是其中的一种实践。NPM 之于 Node，�
 
   ```javascript
   exports.sayHello = function () {
-    return 'Hello World!';
-  };
+    return 'Hello World!'
+  }
   ```
 
   将代码保存为`hello.js`即可。
@@ -1105,12 +1105,12 @@ define(id?, dependencies?, factory);
 
 ```javascript
 define(function () {
-  var exports = {};
+  var exports = {}
   exports.sayHello = function () {
-    console.log('Hello from module: ' + module.id);
-  };
-  return exports;
-});
+    console.log('Hello from module: ' + module.id)
+  }
+  return exports
+})
 ```
 
 不同之处在于 AMD 模块需要用`define`来明确定义一个模块，而在 Node 实现中式隐式包装的，它们的目的就进行作用域隔离，仅在需要的时候被引入，避免过去那种通过全局变量或者全局命名空间的方式，以免变量污染和不小心修改。另一个区别则是内容需要通过返回的方式实现导出。
@@ -1121,8 +1121,8 @@ CMD 规范由国内的玉伯提出，与 AMD 规范的主要区别在于定义�
 
 ```javascript
 define(['dep1', 'dep2'], function (dep1, dep2) {
-  return function () {};
-});
+  return function () {}
+})
 ```
 
 与 AMD 规范相比，CMD 更接近于 Node 对 CommonJS 规范的定义：`define(factory)`
@@ -1132,7 +1132,7 @@ define(['dep1', 'dep2'], function (dep1, dep2) {
 ```javascript
 define(function (require, exports, module) {
   // The module code goes here
-});
+})
 ```
 
 `require`、`exports`和`module`通过形参传递给模块，在需要依赖模块时，随时调用`require()`引入即可。
@@ -1142,24 +1142,24 @@ define(function (require, exports, module) {
 为了让同一个模块可以运行在前后端，在写作过程中需要考虑兼容前端也实现了模块规范的环境。为了保持前后端的一致性，类库开发者需要将类库代码包装在一个闭包内。以下代码演示如何将`hello()`方法定义到不同的运行环境中，它能够兼容 Node、AMD、CMD 以及常见的浏览器环境中：
 
 ```javascript
-(function (name, definition) {
+;(function (name, definition) {
   // 检测上下文环境是否为 AMD或 CMD
   var hasDefine = typeof define === 'function',
     // 检查上下文环境是否为Node
-    hasExports = typeof module !== 'undefined' && module.exports;
+    hasExports = typeof module !== 'undefined' && module.exports
   if (hasDefine) {
     // AMD 或 CMD
-    define(definition);
+    define(definition)
   } else if (hasExports) {
-    module.exports = definition();
+    module.exports = definition()
   } else {
     // 将模块的执行结果挂载在Window变量中，浏览器中this指向Window对象
-    this[name] = definition();
+    this[name] = definition()
   }
 })('hello', function () {
-  var hello = function () {};
-  return hello;
-});
+  var hello = function () {}
+  return hello
+})
 ```
 
 ## 2.8 总结
