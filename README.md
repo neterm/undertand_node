@@ -24,6 +24,7 @@
 
 - [第十一章 产品化](Chapter%2011.md '产品化')
 
-- [附录A](Appendix%20A.md '附录A')
-- [附录B](Appendix%20B.md '附录B')
-- [附录C](Appendix%20C.md '附录C')
+- [附录 A](Appendix%20A.md '附录A')
+- [附录 B](Appendix%20B.md '附录B')
+- [附录 C](Appendix%20C.md '附录C')
+- [附录 D](Appendix%20D.md '附录D')
